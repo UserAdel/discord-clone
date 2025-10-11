@@ -22,7 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { FileUpload } from "@/components/file-upload";
-
+import axios from "axios";
+import { useRouter } from "next/navigation";
 const formSchema = z.object({
   name: z.string().min(3, {
     message: "Server name must be at least 3 characters long",
@@ -34,6 +35,7 @@ const formSchema = z.object({
 
 export function InitalModal() {
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -45,10 +47,15 @@ export function InitalModal() {
     resolver: zodResolver(formSchema),
   });
   const isLoading = form.formState.isSubmitting;
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(values);
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await axios.post("/api/servers", values);
+      form.reset();
+      router.refresh();
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
   }
   if (!isMounted) {
     return null;
