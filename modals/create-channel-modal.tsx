@@ -140,10 +140,6 @@ export function CreateChannelModal() {
                             {type.toLowerCase()}
                           </SelectItem>
                         ))}
-                        {/* <SelectItem value="TEXT">Text Channel</SelectItem>
-                        <SelectItem value="VOICE">Voice Channel</SelectItem>
-                        <SelectItem value="ANNOUNCEMENT">Announcement Channel</SelectItem>
-                        <SelectItem value="STORE">Store Channel</SelectItem> */}
                       </SelectContent>
                     </Select>
                     <FormMessage />
