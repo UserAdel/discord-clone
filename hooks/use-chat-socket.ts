@@ -8,6 +8,7 @@ type ChatSocketProps = {
   addKey: string;
   updateKey: string;
   queryKey: string;
+  paramValue: string;
 };
 
 type MessageWithMemberWithProfile = Message & {
@@ -20,11 +21,12 @@ export const useChatSocket = ({
   addKey,
   updateKey,
   queryKey,
+  paramValue,
 }: ChatSocketProps) => {
   const { socket } = useSocket();
   const queryClient = useQueryClient();
   useEffect(() => {
-    if (!Socket) {
+    if (!socket) {
       return;
     }
     socket.on(addKey, (message: MessageWithMemberWithProfile) => {
@@ -35,11 +37,11 @@ export const useChatSocket = ({
         const newData = oldData.pages.map((page: any) => {
           return {
             ...page,
-            items: page.items.map((item: MessageWithMemberWithProfile) => {
-              if (item.id === message.id) {
+            item: page.item.map((msg: MessageWithMemberWithProfile) => {
+              if (msg.id === message.id) {
                 return message;
               }
-              return item;
+              return msg;
             }),
           };
         });
@@ -47,12 +49,12 @@ export const useChatSocket = ({
       });
     });
     socket.on(addKey, (message: MessageWithMemberWithProfile) => {
-      queryClient.setQueryData([queryKey], (oldData: any) => {
+      queryClient.setQueryData([queryKey, paramValue], (oldData: any) => {
         if (!oldData || !oldData.pages || oldData.pages.length === 0) {
           return {
             pages: [
               {
-                items: [message],
+                item: [message],
               },
             ],
           };
@@ -60,7 +62,7 @@ export const useChatSocket = ({
         const newData = [...oldData.pages];
         newData[0] = {
           ...newData[0],
-          items: [message, ...newData[0].items],
+          item: [message, ...newData[0].item],
         };
         return { ...oldData, pages: newData };
       });
@@ -69,5 +71,5 @@ export const useChatSocket = ({
       socket.off(addKey);
       socket.off(updateKey);
     };
-  }, [queryClient, addKey, queryClient, socket, updateKey]);
+  }, [addKey, updateKey, queryKey, paramValue, queryClient, socket]);
 };
