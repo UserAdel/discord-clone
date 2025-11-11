@@ -23,6 +23,7 @@ import { Button } from "../ui/button";
 import qs from "query-string";
 import axios from "axios";
 import { useModal } from "@/hooks/use-modal-store";
+import { useRouter, useParams } from "next/navigation";
 interface ChatItemProps {
   id: string;
   content: string;
@@ -59,6 +60,14 @@ export const ChatItem = ({
 }: ChatItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const { onOpen } = useModal();
+  const params = useParams();
+  const router = useRouter();
+  const onMemberClick = () => {
+    if (member.id == currentMember.id) {
+      return;
+    }
+    router.push(`/servers/${params?.serverId}/conversation/${member.id}`);
+  };
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       if (event.key === "Escape" || event.keyCode === 27) {
@@ -109,12 +118,15 @@ export const ChatItem = ({
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
       <div className="group flex gap-x-2 items-start w-full">
-        <div className="cursor-pointer hover:drop-shadow-md transition">
+        <div
+          onClick={onMemberClick}
+          className="cursor-pointer hover:drop-shadow-md transition"
+        >
           <UserAvatar src={member.profile.imageUrl} />
         </div>
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2">
-            <div className="flex items-center">
+            <div className="flex items-center gap-x-1 ">
               <p className="font-semibold text-sm hover:underline cursor-pointer">
                 {member.profile.name}
               </p>
@@ -216,7 +228,7 @@ export const ChatItem = ({
             <Trash
               onClick={() =>
                 onOpen("deleteMessage", {
-                  apiUrl: `socketUrl/${id}`,
+                  apiUrl: `${socketUrl}/${id}`,
                   query: socketQuery,
                 })
               }
