@@ -12,7 +12,7 @@ import { EmojiPicker } from "../emoji-picker";
 import { useRouter } from "next/navigation";
 interface ChatInputProps {
   apiUrl: string;
-  query: Record<string, any>;
+  query: Record<string, string>;
   name: string;
   type: "conversation" | "channel";
 }

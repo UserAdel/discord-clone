@@ -11,10 +11,22 @@ export const config = {
 const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
   if (!res.socket.server.io) {
     const path = "/api/socket/io";
-    const httpServer: NetServer = res.socket.server as any;
+    const httpServer = res.socket.server as any;
     const io = new ServerIO(httpServer, {
       path: path,
       addTrailingSlash: false,
+      cors: {
+        origin:
+          process.env.NODE_ENV === "production"
+            ? [
+                process.env.NEXT_PUBLIC_SITE_URL ||
+                  "https://discord-clone-sigma-dusky.vercel.app",
+              ]
+            : ["http://localhost:3000"],
+        methods: ["GET", "POST"],
+        credentials: true,
+      },
+      transports: ["websocket", "polling"],
     });
     res.socket.server.io = io;
   }

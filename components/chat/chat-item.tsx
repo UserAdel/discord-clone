@@ -69,7 +69,7 @@ export const ChatItem = ({
     router.push(`/servers/${params?.serverId}/conversation/${member.id}`);
   };
   useEffect(() => {
-    const handleKeyDown = (event: any) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" || event.keyCode === 27) {
         setIsEditing(false);
       }
